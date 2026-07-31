@@ -1,0 +1,42 @@
+name: Bug report
+description: Report deterministic, data-integrity, or operational defects
+title: "[BUG] "
+labels: ["bug", "triage"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: [Critical, High, Medium, Low]
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: Remove credentials, account identifiers, authorization headers, and signed URLs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected deterministic behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence and reproduction
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety impact
+      options:
+        - label: Paper endpoint or account verification
+        - label: Missing or incorrect protective stop
+        - label: Duplicate order or position
+        - label: Reconciliation or persistence mismatch
+        - label: Stale or future data
+        - label: Secret exposure

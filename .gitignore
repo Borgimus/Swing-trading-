@@ -1,0 +1,36 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+
+# Runtime and account data
+data/
+runtime/
+backups/
+logs/
+*.db
+*.sqlite*
+*.log
+
+# Imported candidate and broker exports
+imports/
+exports/
+reports/private/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
