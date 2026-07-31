@@ -1,14 +1,26 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from sqlite3 import Connection as SQLiteConnection
 
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import Engine, create_engine, event, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session, sessionmaker
 
 
 class DatabaseConfigurationError(ValueError):
     """Raised when a deployed database configuration violates the storage boundary."""
+
+
+def _enable_sqlite_foreign_keys(
+    dbapi_connection: SQLiteConnection, connection_record: object
+) -> None:
+    del connection_record
+    cursor = dbapi_connection.cursor()
+    try:
+        cursor.execute("PRAGMA foreign_keys=ON")
+    finally:
+        cursor.close()
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +39,8 @@ class Database:
         if parsed.get_backend_name() == "sqlite":
             kwargs["connect_args"] = {"check_same_thread": False}
         engine = create_engine(url, **kwargs)
+        if parsed.get_backend_name() == "sqlite":
+            event.listen(engine, "connect", _enable_sqlite_foreign_keys)
         return cls(engine=engine, sessions=sessionmaker(engine, expire_on_commit=False))
 
     def ping(self) -> bool:

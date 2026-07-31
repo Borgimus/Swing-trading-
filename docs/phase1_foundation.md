@@ -45,7 +45,7 @@ The Phase 1 review run completed with these exact results:
 - `ruff format --check .`: passed; 58 files already formatted.
 - `ruff check .`: passed.
 - `mypy src`: passed for 25 source files in strict mode.
-- `pytest -q`: 58 passed, 1 skipped in 2.01 seconds.
+- `pytest -q`: 59 passed, 1 skipped in 3.57 seconds after the CI repair.
 - `detect-secrets-hook`: passed for every tracked file.
 - `pip-audit`: passed with no known vulnerabilities in locked runtime dependencies.
 - `uv build`: produced both the source distribution and wheel.
@@ -55,3 +55,11 @@ The one skipped test is the live PostgreSQL importer integration because this re
 does not provide Docker or a local PostgreSQL server. The dedicated GitHub Actions PostgreSQL
 job runs that migration and test after publication. Until that job passes, PostgreSQL runtime
 validation remains an explicit Phase 1 acceptance dependency.
+
+## PostgreSQL CI repair
+
+The first published PostgreSQL run exposed dependent rows being flushed before their parent
+`tc2000_batches` row. PostgreSQL rejected the candidate insert through its foreign-key constraint.
+The repository now flushes the parent inside the same transaction before adding child rows. A
+later child failure still rolls back the complete batch. SQLite test connections also enable
+foreign-key enforcement so local tests exercise the same integrity boundary.

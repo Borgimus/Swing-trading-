@@ -60,6 +60,7 @@ class SqlAlchemyImportRepository:
                         detail=detail,
                     )
                 )
+                session.flush()
                 session.add_all(self._file_models(batch_id, evidence))
         except IntegrityError:
             existing = self.find_by_hash(evidence.batch_sha256)
@@ -86,6 +87,7 @@ class SqlAlchemyImportRepository:
                         detail=None,
                     )
                 )
+                session.flush()
                 session.add_all(self._file_models(batch_id, evidence))
                 session.add_all(
                     Tc2000Membership(

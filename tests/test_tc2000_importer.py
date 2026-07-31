@@ -11,6 +11,7 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 
 from swing_trading.storage.database import Database
 from swing_trading.storage.import_repository import SqlAlchemyImportRepository
@@ -304,6 +305,31 @@ def test_database_failure_after_raw_preservation_fails_closed(tmp_path: Path) ->
     assert result.error_code is ImportErrorCode.PERSISTENCE_FAILURE
     assert result.batch_id is None
     assert (tmp_path / "raw" / result.batch_sha256 / "manifest.json").is_file()
+
+
+def test_child_constraint_failure_rolls_back_entire_batch(database: Database) -> None:
+    repository = SqlAlchemyImportRepository(database)
+    evidence = BatchEvidence(
+        batch_sha256="c" * 64,
+        config_sha256=CONFIG_SHA256,
+        expected_market_date=MARKET_DATE,
+        received_at=RECEIVED_AT,
+        manifest_uri="immutable://manifest",
+        files=(),
+    )
+    invalid_candidate = CandidateRecord(
+        mode=CandidateMode.UNION_RANKED,
+        symbol="AAPL",
+        agreement_count=1,
+        execution_eligible=True,
+    )
+
+    with pytest.raises(IntegrityError):
+        repository.record_accepted(evidence, (), (invalid_candidate,))
+
+    with database.sessions() as session:
+        assert session.scalar(select(func.count()).select_from(Tc2000Batch)) == 0
+        assert session.scalar(select(func.count()).select_from(CandidateSet)) == 0
 
 
 def test_raw_storage_failure_never_calls_persistence() -> None:

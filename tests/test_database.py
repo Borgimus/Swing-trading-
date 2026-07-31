@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
 
 from swing_trading.storage.database import Database, DatabaseConfigurationError
 
@@ -29,6 +29,8 @@ def test_sqlite_ping_and_initial_migration(tmp_path: Path) -> None:
     database = Database.from_url(url, allow_sqlite=True)
     try:
         assert database.ping() is True
+        with database.engine.connect() as connection:
+            assert connection.execute(text("PRAGMA foreign_keys")).scalar_one() == 1
         assert {
             "strategy_config_versions",
             "tc2000_batches",
