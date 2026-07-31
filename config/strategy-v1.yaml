@@ -1,0 +1,43 @@
+schema_version: 1
+strategy_version: "1.0.0-provisional"
+mode: BACKTEST
+operator_approval:
+  status: PENDING
+  approved_by: null
+  approved_at: null
+  approval_reference: null
+paper_only: true
+phase1_execution_enabled: false
+tc2000:
+  execution_candidate_mode: intersection_3_of_3
+  shadow_candidate_modes:
+    - agreement_2_of_3
+    - union_ranked
+  base_universe_name: null
+  operator_guide_verified: false
+  max_batch_age_minutes: null
+  max_export_skew_seconds: null
+risk:
+  risk_fraction: 0.01
+  max_risk_fraction: 0.01
+  maximum_position_notional_fraction: null
+  maximum_portfolio_exposure_fraction: null
+  maximum_concurrent_positions: null
+strategy_hypotheses:
+  minimum_price: 1.0
+  volatility_definition: adr20_previous_close_percent
+  minimum_volatility_percent: 5.0
+  average_dollar_volume_floor: 30000000
+  minimum_permitted_dollar_volume_floor: 5000000
+  pyramiding_enabled: false
+  extended_hours_entries_enabled: false
+  five_r_partial_fraction: 0.25
+  trend_slope_lookback: null
+  trend_slope_thresholds: null
+  pivot_definition: null
+  contraction_definition: null
+  moving_average_proximity: null
+  narrow_candle_atr_fraction: null
+  entry_chase_limit: null
+  entry_ttl_seconds: null
+  stop_width_limits: null

@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling==1.28.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tc2000-alpaca-swing"
+version = "0.1.0"
+description = "Paper-only, deterministic TC2000-to-Alpaca swing-trading research system"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { file = "LICENSE" }
+dependencies = [
+  "alembic==1.18.5",
+  "exchange-calendars==4.13.2",
+  "fastapi==0.141.1",
+  "psycopg[binary]==3.3.4",
+  "pydantic==2.13.4",
+  "PyYAML==6.0.3",
+  "SQLAlchemy==2.0.51",
+  "uvicorn==0.52.0",
+]
+
+[dependency-groups]
+dev = [
+  "detect-secrets==1.5.0",
+  "httpx2==2.9.1",
+  "hypothesis==6.164.0",
+  "mypy==2.3.0",
+  "pip-audit==2.10.1",
+  "pytest==9.1.1",
+  "ruff==0.16.1",
+  "types-PyYAML==6.0.12.20260724",
+]
+
+[project.scripts]
+swing-validate-config = "swing_trading.config.loader:main"
+swing-import-tc2000 = "swing_trading.tc2000.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/swing_trading"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+packages = ["swing_trading"]
+
+[[tool.mypy.overrides]]
+module = ["exchange_calendars", "exchange_calendars.*", "pandas", "pandas.*"]
+ignore_missing_imports = true

@@ -13,7 +13,7 @@ Production-oriented research and automation for a long-only US-stock swing strat
 
 ## Current phase
 
-Phase 0 contains the reviewed requirements audit and system design. It intentionally contains no trading implementation. See [the phased plan](docs/implementation_plan.md).
+Phase 1 contains the safe foundation and atomic TC2000 import path. It intentionally contains no signal or order implementation. See [the Phase 1 evidence](docs/phase1_foundation.md) and [phased plan](docs/implementation_plan.md).
 
 Proposed repository name: `tc2000-alpaca-swing`.
 
@@ -27,6 +27,21 @@ Proposed repository name: `tc2000-alpaca-swing`.
 - [Test plan](docs/test_plan.md)
 - [Implementation plan](docs/implementation_plan.md)
 - [Delegation log](docs/delegation_log.md)
+
+## Development
+
+Requirements: Python 3.12 and `uv` 0.11.33.
+
+```bash
+uv sync --frozen --all-groups
+uv run swing-validate-config config/strategy-v1.yaml
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy src
+uv run pytest -q
+```
+
+The committed configuration permits BACKTEST only. Missing operator decisions keep readiness false. SQLite requires an explicit test-only override; PostgreSQL is the deployed database boundary.
 
 ## License
 

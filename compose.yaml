@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: swing_trading
+      POSTGRES_USER: swing_user
+      POSTGRES_PASSWORD: local_development_only  # pragma: allowlist secret - local-only
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - swing-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U swing_user -d swing_trading"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  swing-postgres:
