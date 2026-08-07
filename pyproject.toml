@@ -17,7 +17,7 @@ dependencies = [
   "pydantic==2.13.4",
   "PyYAML==6.0.3",
   "SQLAlchemy==2.0.51",
-  "uvicorn==0.52.0",
+  "uvicorn==0.52.1",
 ]
 
 [dependency-groups]
